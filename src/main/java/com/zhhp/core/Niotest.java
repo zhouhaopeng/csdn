@@ -7,6 +7,7 @@ import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 public class Niotest {
@@ -51,26 +52,67 @@ public class Niotest {
     public void socketChannel() throws IOException {
 
         SocketChannel socketChannel = SocketChannel.open();
-        socketChannel.connect(new InetSocketAddress("http://jenkov.com", 80));
-        if (! socketChannel.finishConnect()){
-        	 ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-             int n = socketChannel.read(byteBuffer);
+        socketChannel.connect(new InetSocketAddress("localhost", 999));
+        
+        
+        String msg = "hello world";
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+        byteBuffer.put(msg.getBytes());
 
-             while (n != -1){
-                 byteBuffer.flip();
-                 while (byteBuffer.hasRemaining()){
-                     System.out.println(byteBuffer.getChar());
-                 }
+         byteBuffer.flip();
+         while (byteBuffer.hasRemaining()){
+             socketChannel.write(byteBuffer);
+         }
 
-                 byteBuffer.clear();
-                 n = socketChannel.read(byteBuffer);
-             }
+         byteBuffer.clear();
+         
+        
 
-        }else{
-        	System.out.println("not connect");
-        }
-       
         socketChannel.close();
 
+    }
+    
+    
+    @Test
+    public void socketServer() throws IOException{
+    	ServerSocketChannel serverS = ServerSocketChannel.open();
+    	
+    	serverS.socket().bind(new InetSocketAddress(999));
+    	serverS.configureBlocking(false);
+    	
+    	while(true){
+    		final SocketChannel sc = serverS.accept();
+    		if (sc != null){
+    			new Thread(new Runnable() {
+					
+					public void run() {
+						ByteBuffer bf = ByteBuffer.allocate(512);
+	    				int c;
+						try {
+							
+							while(true){
+								c = sc.read(bf);
+								
+								while(c != -1){
+			    					bf.flip();
+			    					while(bf.hasRemaining()){
+			    						System.out.println((char)bf.get());
+			    					}
+			    					bf.clear();
+			    					c = sc.read(bf);
+			    				}
+								sc.close();
+							}
+							
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}).start();
+    		}
+    		
+    	}
+    	
     }
 }
