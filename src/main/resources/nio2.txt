@@ -1,0 +1,19 @@
+RandomAccessFile aFile = new RandomAccessFile（“data / nio-data.txt”，“rw”）;
+FileChannel inChannel = aFile.getChannel（）;
+
+//创建容量为48字节的缓冲区
+ByteBuffer buf = ByteBuffer.allocate（48）;
+
+int bytesRead = inChannel.read（buf）; //读入缓冲区
+while（bytesRead！= -1）{
+
+  buf.flip（）;   //使缓冲区准备好读取
+
+  而（buf.hasRemaining（））{
+      System.out.print（（char）buf.get（））; //一次读取1个字节
+  }
+
+  buf.clear（）; //使缓冲区准备好写入
+  bytesRead = inChannel.read（buf）;
+}
+aFile.close（）;
