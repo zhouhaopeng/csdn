@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 public class BinaryNode<T extends Comparable> implements Serializable {
 
-    public BinaryNode<T> left;
+    private BinaryNode<T> left;
 
-    public BinaryNode<T> right;
+    private BinaryNode<T> right;
 
-    public T data;
+    private T data;
 
     public BinaryNode(T data,BinaryNode<T> left,BinaryNode<T> right){
         this.data = data;
@@ -22,5 +22,29 @@ public class BinaryNode<T extends Comparable> implements Serializable {
 
     public boolean isLeaf(){
         return this.left==null&&this.right==null;
+    }
+
+    public BinaryNode<T> getLeft() {
+        return left;
+    }
+
+    public void setLeft(BinaryNode<T> left) {
+        this.left = left;
+    }
+
+    public BinaryNode<T> getRight() {
+        return right;
+    }
+
+    public void setRight(BinaryNode<T> right) {
+        this.right = right;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }
