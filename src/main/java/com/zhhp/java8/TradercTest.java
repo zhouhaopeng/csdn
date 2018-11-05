@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 public class TradercTest {
 
@@ -100,5 +101,23 @@ public class TradercTest {
 
     }
 
+    @Test
+    public void test5(){
+        transactions.stream().collect(Collectors.groupingBy(Transaction::getValue));
+    }
+
+    @Test
+    public void test6(){
+
+        Accumulator accumulator = new Accumulator();
+        LongStream.rangeClosed(0,10000000).parallel().forEach(Accumulator::add);
+        System.out.println(accumulator.total);
+    }
+    static class Accumulator{
+        public static long total = 0;
+        private static void add(long value){total += value;}
+    }
 }
+
+
 
